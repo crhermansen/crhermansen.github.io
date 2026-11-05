@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hjerterytmer – enkelt forklart</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --font-display:"TV 2 Display", Arial, sans-serif;
+  --font-text:"TV 2 Text", Arial, sans-serif;
+  --red:#DC0E2A;
+  --bg:#FFFFFF;
+  --surface-2:#ECEBFF;
+  --seg-hover:#DCD8FF;
+  --text:#100118;
+  --text-2:#4B3D60;
+  --border:#DCD8F4;
+  --border-strong:#B7B1FF;
+  --accent-text:#4D04B1;
+  --btn-bg:#6704FF;
+  --btn-text:#FFFFFF;
+  --btn-hover:#4D04B1;
+  --btn-hover-text:#FFFFFF;
+  --focus:#6704FF;
+  --mon-bg:#100118;
+  --paper:#ECEBFF;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#100118;
+    --surface-2:#190036;
+    --seg-hover:#310268;
+    --text:#FFFFFF;
+    --text-2:#B7B1FF;
+    --border:#310268;
+    --border-strong:#4D04B1;
+    --accent-text:#B7B1FF;
+    --btn-bg:#6704FF;
+    --btn-text:#FFFFFF;
+    --btn-hover:#B7B1FF;
+    --btn-hover-text:#100118;
+    --focus:#B7B1FF;
+    --mon-bg:#190036;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#100118;
+  --surface-2:#190036;
+  --seg-hover:#310268;
+  --text:#FFFFFF;
+  --text-2:#B7B1FF;
+  --border:#310268;
+  --border-strong:#4D04B1;
+  --accent-text:#B7B1FF;
+  --btn-bg:#6704FF;
+  --btn-text:#FFFFFF;
+  --btn-hover:#B7B1FF;
+  --btn-hover-text:#100118;
+  --focus:#B7B1FF;
+  --mon-bg:#190036;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--font-text);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:40px 24px 56px}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-0.02em;margin:0;font-weight:500}
+h1{font-size:clamp(40px,6vw,64px);line-height:1.02}
+.ingress{font-family:var(--font-display);font-size:clamp(18px,2.2vw,22px);line-height:1.35;color:var(--text-2);max-width:42ch;margin:12px 0 0}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:28px;border-bottom:1px solid var(--border)}
+
+button{font-family:var(--font-text)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button:active{transform:scale(.97)}
+
+.seg{display:inline-flex;padding:4px;border-radius:999px;background:var(--surface-2);gap:4px}
+.seg button{font:600 15px/1 var(--font-text);border:0;background:transparent;color:var(--text);padding:11px 18px;border-radius:999px;cursor:pointer;transition:background-color 120ms ease-out,color 120ms ease-out}
+.seg button:hover{background:var(--seg-hover)}
+.seg button[aria-pressed="true"]{background:var(--btn-bg);color:var(--btn-text)}
+
+.layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px;margin-top:32px}
+.grp{margin-bottom:22px}
+.grp-h{font:600 13px/1.3 var(--font-text);color:var(--text-2);margin:0 0 6px 15px}
+.rbtn{display:block;width:100%;text-align:left;padding:9px 12px;border:0;border-left:3px solid transparent;background:transparent;color:var(--text);border-radius:0 8px 8px 0;font:400 15px/1.35 var(--font-text);cursor:pointer;transition:background-color 120ms ease-out}
+.rbtn:hover{background:var(--surface-2)}
+.rbtn[aria-current="true"]{background:var(--surface-2);border-left-color:var(--btn-bg);font-weight:600}
+.msel{display:none}
+.msel span{display:block;font:600 13px/1.3 var(--font-text);color:var(--text-2);margin-bottom:6px}
+.msel select{width:100%;font:500 16px/1.3 var(--font-text);padding:12px 14px;border-radius:8px;border:1px solid var(--border-strong);background:var(--bg);color:var(--text)}
+
+.rhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.rhead h2{font-size:clamp(28px,3.6vw,40px);line-height:1.1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-block;font:600 13px/1 var(--font-text);padding:7px 11px;border-radius:999px;white-space:nowrap}
+.tag-ok{background:var(--surface-2);color:var(--text)}
+.tag-watch{border:1px solid var(--border-strong);color:var(--accent-text);padding:6px 10px}
+.tag-urgent{background:var(--red);color:#FFFFFF}
+.lead{font-family:var(--font-display);font-size:19px;line-height:1.4;color:var(--text-2);max-width:60ch;margin:10px 0 20px}
+
+.ecg{margin:0}
+.ecg-box{border-radius:12px;overflow:hidden;background:var(--mon-bg)}
+.monitor{position:relative}
+#mon{display:block;width:100%;height:260px}
+.ov{position:absolute;top:12px;font:600 13px/1 var(--font-text);color:#B7B1FF;pointer-events:none}
+.ov-l{left:14px}
+.ov-r{right:16px;text-align:right;color:#FFFFFF}
+.ov-r span{display:block;color:#B7B1FF;margin-bottom:6px}
+.ov-r strong{font:500 42px/1 var(--font-display);letter-spacing:-0.02em}
+.paper{background:var(--paper);overflow-x:auto;-webkit-overflow-scrolling:touch}
+#paper{display:block}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.btn{font:600 15px/1 var(--font-text);padding:11px 16px;border-radius:999px;border:1px solid var(--border-strong);background:transparent;color:var(--text);cursor:pointer;transition:background-color 120ms ease-out,color 120ms ease-out}
+.btn:hover{background:var(--surface-2)}
+.btn[aria-pressed="true"]{background:var(--surface-2);border-color:var(--btn-bg)}
+.btn-primary{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-text)}
+.btn-primary:hover{background:var(--btn-hover);border-color:var(--btn-hover);color:var(--btn-hover-text)}
+.toolbar .seg{background:var(--surface-2)}
+figcaption{font-size:14px;color:var(--text-2);margin-top:12px;max-width:72ch}
+
+.facts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:28px 0 32px}
+.facts div{background:var(--bg);padding:14px 16px}
+.facts dt{font-size:13px;color:var(--text-2);margin-bottom:4px}
+.facts dd{margin:0;font-weight:600;font-size:15px;line-height:1.35}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.cols h3{font-size:21px;line-height:1.2;margin-bottom:8px}
+.cols p{margin:0}
+.cols ul{margin:0;padding-left:18px}
+.cols li{margin-bottom:8px}
+.tip{margin:28px 0 0;padding:14px 18px;border-left:3px solid var(--btn-bg);background:var(--surface-2);border-radius:0 8px 8px 0;max-width:75ch}
+
+.quiz-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:24px}
+.qopt{text-align:left;font:600 16px/1.35 var(--font-text);padding:16px 18px;border-radius:12px;border:1px solid var(--border-strong);background:transparent;color:var(--text);cursor:pointer;transition:background-color 120ms ease-out}
+.qopt:hover{background:var(--surface-2)}
+.qopt[aria-disabled="true"]{cursor:default}
+.qopt[aria-disabled="true"]:hover{background:transparent}
+.qopt.is-right,.qopt.is-right:hover{border:2px solid var(--btn-bg);background:var(--surface-2);padding:15px 17px}
+.qopt.is-wrong,.qopt.is-wrong:hover{border:2px solid var(--red);padding:15px 17px}
+.qfb{margin-top:22px;max-width:70ch}
+.qfb p{margin:0 0 16px;font-size:17px}
+.qact{display:flex;flex-wrap:wrap;gap:10px}
+
+.howto{margin-top:72px;padding-top:40px;border-top:1px solid var(--border)}
+.howto h2{font-size:clamp(28px,3.6vw,40px);line-height:1.1}
+.steps{list-style:none;counter-reset:s;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;padding:0;margin:28px 0 40px}
+.steps li{counter-increment:s;border-top:2px solid var(--btn-bg);padding-top:14px}
+.steps li::before{content:counter(s);display:block;font:500 36px/1 var(--font-display);letter-spacing:-0.02em;color:var(--accent-text);margin-bottom:12px}
+.steps h3{font-size:20px;margin-bottom:6px}
+.steps p{margin:0;font-size:15px}
+.paperfacts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:24px 40px;align-items:start}
+.paperfacts h3{font-size:24px;line-height:1.2}
+.paperfacts dl{margin:0;border-top:1px solid var(--border)}
+.paperfacts dl div{display:grid;grid-template-columns:160px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.paperfacts dt{color:var(--text-2);font-size:15px}
+.paperfacts dd{margin:0;font-weight:600}
+.last{font-family:var(--font-display);font-size:clamp(20px,2.4vw,26px);line-height:1.3;max-width:40ch;margin:48px 0 0}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);color:var(--text-2);font-size:14px;max-width:80ch}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr;gap:24px}
+  #navList{display:none}
+  .msel{display:block}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .facts div:last-child{grid-column:1/-1}
+  .cols{grid-template-columns:1fr;gap:24px}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .paperfacts{grid-template-columns:1fr}
+  #mon{height:210px}
+}
+@media (max-width:540px){
+  .wrap{padding:28px 16px 48px}
+  .steps{grid-template-columns:1fr}
+  .quiz-opts{grid-template-columns:1fr}
+  .paperfacts dl div{grid-template-columns:1fr;gap:2px}
+  .ov-r strong{font-size:34px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important}
+  button:active{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Hjerterytmer</h1>
+      <p class="ingress">Enkle forklaringer på rytmene du møter på monitoren, med EKG du kan se live eller som utskrift.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Velg hva du vil gjøre">
+      <button type="button" id="mLearn" aria-pressed="true">Lær rytmene</button>
+      <button type="button" id="mQuiz" aria-pressed="false">Test deg selv</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="Rytmer">
+      <label class="msel"><span>Velg rytme</span><select id="sel"></select></label>
+      <div id="navList"></div>
+    </nav>
+
+    <main>
+      <div class="rhead">
+        <h2 id="rName"></h2>
+        <div class="tags" id="rTags"></div>
+      </div>
+      <p class="lead" id="rShort"></p>
+
+      <figure class="ecg">
+        <div class="ecg-box" id="ecgBox" role="img" aria-label="">
+          <div class="monitor" id="monWrap">
+            <canvas id="mon"></canvas>
+            <div class="ov ov-l">Avledning II</div>
+            <div class="ov ov-r"><span>Puls</span><strong id="hr">---</strong></div>
+          </div>
+          <div class="paper" id="paperWrap" hidden><canvas id="paper"></canvas></div>
+        </div>
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Visning">
+            <button type="button" id="bMon" aria-pressed="true">Monitor</button>
+            <button type="button" id="bPaper" aria-pressed="false">Utskrift</button>
+          </div>
+          <button type="button" class="btn" id="bPause">Pause</button>
+          <button type="button" class="btn" id="bNotes" aria-pressed="true">Merk bølgene</button>
+        </div>
+        <figcaption id="cap"></figcaption>
+      </figure>
+
+      <section id="quizBox" hidden aria-live="polite"></section>
+
+      <div id="details">
+        <dl class="facts" id="facts"></dl>
+        <div class="cols">
+          <section><h3>Hva skjer i hjertet</h3><p id="tWhat"></p></section>
+          <section><h3>Slik kjenner du den igjen</h3><p id="tRec"></p></section>
+          <section><h3>Dette gjør du</h3><ul id="tAct"></ul></section>
+        </div>
+        <p class="tip" id="tTip"></p>
+      </div>
+    </main>
+  </div>
+
+  <section class="howto" aria-labelledby="howtoH">
+    <h2 id="howtoH">Slik leser du en rytmestrimmel</h2>
+    <p class="lead">Still de samme fem spørsmålene hver gang. Da blir det lettere å se hva som er annerledes.</p>
+    <ol class="steps">
+      <li><h3>Frekvens</h3><p>Under 60, mellom 60 og 100, eller over 100? Tell QRS-kompleksene på seks sekunder og gang med 10.</p></li>
+      <li><h3>Rytme</h3><p>Er avstanden mellom R-takkene lik hele veien? Merk av to R-takker på en papirlapp og flytt den bortover.</p></li>
+      <li><h3>P-bølger</h3><p>Finnes de, ser de like ut, og kommer det én P-bølge foran hver QRS?</p></li>
+      <li><h3>PR-tid</h3><p>Fra starten av P til starten av QRS. Normalt 0,12–0,20 sekunder, altså 3–5 små ruter. Er den lik hver gang?</p></li>
+      <li><h3>QRS-bredde</h3><p>Smal, under 3 små ruter, betyr at impulsen kom ovenfra. Bred betyr ofte at den startet i ventriklene.</p></li>
+    </ol>
+    <div class="paperfacts">
+      <h3>Rutene på EKG-papiret</h3>
+      <dl>
+        <div><dt>Liten rute</dt><dd>1 mm, som er 0,04 sekunder</dd></div>
+        <div><dt>Stor rute</dt><dd>5 mm, som er 0,2 sekunder</dd></div>
+        <div><dt>Fem store ruter</dt><dd>1 sekund</dd></div>
+        <div><dt>Høyde</dt><dd>10 mm er 1 mV</dd></div>
+        <div><dt>Hurtigregel</dt><dd>300 delt på antall store ruter mellom to R-takker gir frekvensen, når rytmen er regelmessig.</dd></div>
+      </dl>
+    </div>
+    <p class="last">Og til slutt: se på pasienten. Monitoren viser elektrisk aktivitet, ikke om hjertet faktisk pumper blod.</p>
+  </section>
+
+  <footer>Laget som læringsstøtte for sykepleiere. EKG-ene er forenklede, datagenererte tegninger og ikke registreringer fra ekte pasienter. Følg alltid lokale prosedyrer og retningslinjene til Norsk resuscitasjonsråd.</footer>
+</div>
+
+<script>
+(function(){
+const TAU = Math.PI * 2;
+const fmt = x => x.toFixed(2).replace('.', ',');
+function rng(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function hash(s){ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+const wander = t => 0.025*Math.sin(TAU*0.23*t) + 0.012*Math.sin(TAU*0.09*t+1.3);
+const tOff = RR => 0.2 + 0.09*Math.min(RR,1.4);
+
+/* Bygger EKG-signalet som en sum av små bølger */
+class B {
+  constructor(){ this.comps=[]; this.notes=[]; this.rs=[]; }
+  g(c,a,w){ this.comps.push({c,a,w}); }
+  note(o){ this.notes.push(o); }
+  P(t){ this.g(t,0.14,0.022); this.note({k:'P',t,text:'P'}); }
+  qrs(r,amp){ amp=amp||1.1; this.g(r-0.03,-0.1,0.008); this.g(r,amp,0.011); this.g(r+0.032,-0.26,0.01); this.rs.push(r); this.note({k:'QRS',t:r,text:'QRS'}); }
+  T(c,amp){ amp=amp==null?0.28:amp; this.g(c,amp,0.05); this.note({k:'T',t:c,text:'T'}); }
+  wide(r,amp,text,k){ this.g(r,amp,0.032); this.g(r+0.075,-0.38,0.028); this.g(r+0.34,-0.4,0.07); this.rs.push(r); this.note({k:k||'wide',t:r,text:text||'Bred QRS'}); }
+  spike(t){ this.g(t,1.8,0.003); this.note({k:'Spike',t,text:'Pacespike'}); }
+  br(t1,t2,text){ this.note({k:'br',t1,t2,text}); }
+  drop(t){ this.note({k:'drop',t,text:'Ingen QRS'}); }
+  lbl(t,text){ this.note({k:'lbl',t,text}); }
+  v(t,base){ let s=base(t); const cs=this.comps; for(let i=0;i<cs.length;i++){ const c=cs[i]; const d=t-c.c; if(d>0.45||d<-0.45) continue; const z=d/c.w; s+=c.a*Math.exp(-0.5*z*z); } return s; }
+}
+
+function sinusGen(rate, pr, brAll){
+  return function(b,rnd){ let s=0.12, i=0;
+    return { base:wander, fill(u){ while(s<u){
+      const RR=60/rate*(1+(rnd()-0.5)*0.04); const pc=s+0.06; const r=pc+pr-0.01;
+      b.P(pc); b.qrs(r); b.T(r+tOff(RR));
+      if(brAll||i===0) b.br(pc-0.05, r-0.04, 'PR '+fmt(pr)+' s');
+      s+=RR; i++; } } };
+  };
+}
+function blockGen(seq, pp){
+  return function(b){ let s=0.1, i=0;
+    return { base:wander, fill(u){ while(s<u){
+      const pc=s+0.06; b.P(pc); const pr=seq[i%seq.length];
+      if(pr===null){ b.drop(pc+0.22); }
+      else { const r=pc+pr-0.01; b.qrs(r); b.T(r+tOff(pp)); b.br(pc-0.05, r-0.04, fmt(pr)+' s'); }
+      s+=pp; i++; } } };
+  };
+}
+const GEN = {
+  sinus: sinusGen(75,0.16,false),
+  brady: sinusGen(44,0.17,false),
+  tachy: sinusGen(125,0.14,false),
+  af(b,rnd){ let s=0.25, i=0;
+    const base=t=>wander(t)+0.045*Math.sin(TAU*6.1*t)+0.035*Math.sin(TAU*7.9*t+1.1)+0.025*Math.sin(TAU*4.6*t+2.3);
+    return { base, fill(u){ while(s<u){ const RR=0.38+rnd()*0.52; const r=s;
+      b.qrs(r, 0.95+rnd()*0.12); b.T(r+tOff(RR)*0.95, 0.16);
+      if(i===0) b.lbl(r+RR*0.62, 'Flimmerbølger');
+      s+=RR; i++; } } }; },
+  flutter(b){ let s=0;
+    const base=t=>{ const ph=((t/0.2)%1+1)%1; const f=ph<0.78 ? 0.12-0.34*(ph/0.78) : -0.22+0.34*((ph-0.78)/0.22); return wander(t)*0.5+f; };
+    [0.6,0.8,1.4,1.6].forEach(t=>b.note({k:'F',t,text:'F'}));
+    return { base, fill(u){ while(s<u){ const r=s+0.16; b.qrs(r,1.05); b.T(r+0.27,0.1); s+=0.8; } } }; },
+  svt(b,rnd){ let s=0.15, i=0;
+    return { base:wander, fill(u){ while(s<u){ const RR=60/185*(1+(rnd()-0.5)*0.01); const r=s;
+      b.qrs(r,1.0); b.T(r+0.2,0.24); if(i===3) b.lbl(r+0.2,'Ingen synlige P');
+      s+=RR; i++; } } }; },
+  ves(b,rnd){ let s=0.12, i=0, lastR=null; const RR0=60/72;
+    return { base:wander, fill(u){ while(s<u){ const RR=RR0*(1+(rnd()-0.5)*0.03);
+      if(i%4===2 && lastR!==null){ b.wide(lastR+0.47,1.35,'VES','VES'); }
+      else { const pc=s+0.06, r=pc+0.15; b.P(pc); b.qrs(r); b.T(r+tOff(RR)); lastR=r; }
+      s+=RR; i++; } } }; },
+  vt(b){ let s=0.2;
+    return { base:wander, fill(u){ while(s<u){ const r=s; b.g(r,1.3,0.045); b.g(r+0.165,-0.75,0.055); b.rs.push(r); b.note({k:'wide',t:r,text:'Bred QRS'}); s+=60/175; } } }; },
+  vf(b){ b.lbl(1.2,'Ingen QRS-komplekser');
+    return { base:t=>{ const A=0.42+0.22*Math.sin(TAU*0.37*t)+0.12*Math.sin(TAU*0.13*t+1); return A*(Math.sin(TAU*5.2*t)+0.55*Math.sin(TAU*7.4*t+1.3)+0.4*Math.sin(TAU*3.6*t+0.4))/1.5; }, fill(){} }; },
+  asys(b){ b.lbl(1.6,'Nesten flat linje');
+    return { base:t=>0.03*Math.sin(TAU*0.21*t)+0.015*Math.sin(TAU*0.53*t+2)+0.006*Math.sin(TAU*9.7*t), fill(){} }; },
+  av1: sinusGen(68,0.32,true),
+  av2a: blockGen([0.16,0.26,0.32,null],0.78),
+  av2b: blockGen([0.18,0.18,null],0.78),
+  av3(b){ let p=0.1, r=0.5;
+    return { base:wander, fill(u){ while(p<u){ b.P(p); p+=0.68; } while(r<u){ b.wide(r,1.0,'Bred QRS'); r+=1.55; } } }; },
+  pace(b){ let s=0.15;
+    return { base:wander, fill(u){ while(s<u){ const r=s+0.1; b.spike(r-0.07); b.wide(r,1.05,'Pacet QRS'); s+=60/70; } } }; }
+};
+
+/* Innhold */
+const RH = [
+{id:'sinus', group:'Sinusrytmer', nav:'Normal sinusrytme', name:'Normal sinusrytme', tags:[['Normal','ok']],
+ short:'Hjertets vanlige rytme. Alt skjer i riktig rekkefølge og i riktig tempo.',
+ facts:['60–100 per minutt','Regelmessig','Én foran hver QRS','0,12–0,20 s','Smal, under 0,12 s'],
+ what:'Impulsen starter i sinusknuten øverst i høyre atrium og sprer seg over atriene (P-bølgen). Den venter et øyeblikk i AV-knuten (PR-tiden) og går så ut i ventriklene (QRS). T-bølgen er ventriklene som lader seg opp igjen.',
+ rec:'Alt kommer i riktig rekkefølge: P, QRS og T, om og om igjen, med like lang avstand mellom slagene.',
+ act:['Dette er utgangspunktet du sammenligner alle andre rytmer med.','Se alltid på pasienten også. En fin rytme på skjermen sier ingenting om blodtrykk eller sirkulasjon.'],
+ tip:'Lær deg denne godt. Alle andre rytmer beskrives som avvik fra den.'},
+{id:'brady', group:'Sinusrytmer', nav:'Sinusbradykardi', name:'Sinusbradykardi', tags:[['Følg med','watch']],
+ short:'Vanlig sinusrytme, men langsommere enn 60 slag i minuttet.',
+ facts:['Under 60 per minutt','Regelmessig','Én foran hver QRS','Normal','Smal'],
+ what:'Impulsen går samme vei som ved normal sinusrytme, men sinusknuten fyrer sjeldnere.',
+ rec:'Ser ut som normal sinusrytme med lang avstand mellom slagene. Vanlige årsaker er god kondisjon, søvn, betablokkere og andre medisiner, vagusreaksjon ved smerte eller kvalme, lav kroppstemperatur, lavt stoffskifte og hjerteinfarkt.',
+ act:['Vurder pasienten: er hen svimmel, kald og klam, forvirret eller har lavt blodtrykk?','Mål blodtrykk og vurder bevissthet. Se gjennom medisinlisten.','Varsle lege hvis pasienten har symptomer eller frekvensen er svært lav.'],
+ tip:'En veltrent pasient med puls 48 som har det fint, er noe helt annet enn en blek pasient med puls 48 og blodtrykk 80/50.'},
+{id:'tachy', group:'Sinusrytmer', nav:'Sinustakykardi', name:'Sinustakykardi', tags:[['Følg med','watch']],
+ short:'Vanlig sinusrytme, men raskere enn 100 slag i minuttet.',
+ facts:['Over 100 per minutt','Regelmessig','Én foran hver QRS, kan gli inn i T','Normal eller litt kort','Smal'],
+ what:'Sinusknuten fyrer raskere fordi kroppen ber om det. Rytmen er nesten alltid et svar på noe annet.',
+ rec:'Normal oppbygning, men tett i tett. P-bølgen kan ligge nær eller oppå T-bølgen foran.',
+ act:['Let etter årsaken: smerte, feber, angst, blødning, væskemangel, oksygenmangel, sepsis, lungeemboli eller hjertesvikt.','Mål temperatur, blodtrykk, respirasjonsfrekvens og metning, og vurder væskebalansen.','Behandle årsaken, ikke tallet.'],
+ tip:'Sinustakykardi over cirka 150 i hvile er uvanlig hos voksne. Er frekvensen høyere, vurder om det kan være en annen rytme.'},
+{id:'af', group:'Fra atriene og AV-knuten', nav:'Atrieflimmer', name:'Atrieflimmer', tags:[['Følg med','watch']],
+ short:'Atriene flimrer kaotisk, og hjertet slår helt uregelmessig.',
+ facts:['Varierer, ofte rask uten behandling','Uregelmessig uregelmessig','Ingen, bare små flimmerbølger','Kan ikke måles','Smal'],
+ what:'Atriene sender ut hundrevis av kaotiske impulser i minuttet og trekker seg ikke ordentlig sammen. AV-knuten slipper bare noen av dem videre, helt tilfeldig.',
+ rec:'Ingen avstander mellom slagene er like, og grunnlinjen er urolig uten tydelige P-bølger. Dette er den vanligste rytmeforstyrrelsen du møter.',
+ act:['Tell pulsen i et helt minutt. Pulsen ved håndleddet kan være lavere enn frekvensen på monitoren, fordi ikke alle slag gir en pulsbølge.','Mål blodtrykk og spør om hjertebank, tungpust og brystsmerter.','Varsle lege ved nyoppdaget flimmer, høy frekvens eller påvirket pasient.','Sjekk om pasienten bruker blodfortynnende. Flimmer gir økt risiko for blodpropp og hjerneslag.'],
+ tip:'Nøkkelordet er «uregelmessig uregelmessig». Det finnes ikke noe mønster å finne.'},
+{id:'flutter', group:'Fra atriene og AV-knuten', nav:'Atrieflutter', name:'Atrieflutter', tags:[['Følg med','watch']],
+ short:'Atriene slår svært raskt og jevnt, og grunnlinjen ser ut som en sagtann.',
+ facts:['Ofte 150 (2:1) eller 75 (4:1)','Oftest regelmessig','Sagtannbølger, rundt 300 per minutt','Kan ikke måles','Smal'],
+ what:'En impuls går i ring i høyre atrium, rundt 300 ganger i minuttet. AV-knuten slipper gjennom hver andre, tredje eller fjerde.',
+ rec:'Grunnlinjen ser ut som en sagtann (F-bølger). Stripen her viser 4:1, altså fire F-bølger for hvert slag.',
+ act:['Vurder pasienten som ved atrieflimmer: puls, blodtrykk og symptomer.','Varsle lege og ta 12-avlednings-EKG etter lokal rutine.','Flutter gir samme økte risiko for blodpropp som flimmer.'],
+ tip:'Ser du en helt jevn frekvens på rundt 150, bør du tenke flutter med 2:1. Da gjemmer sagtannen seg ofte i QRS og T.'},
+{id:'svt', group:'Fra atriene og AV-knuten', nav:'SVT', name:'Supraventrikulær takykardi (SVT)', tags:[['Haster','urgent']],
+ short:'En plutselig, svært rask og regelmessig rytme som starter over ventriklene.',
+ facts:['150–250 per minutt','Regelmessig','Som regel ikke synlige','Kan ikke måles','Smal'],
+ what:'En impuls går i ring i eller rundt AV-knuten, slik at hjertet slår svært fort. Rytmen starter og stopper ofte brått, og rammer også unge og friske.',
+ rec:'Rask, helt jevn rytme med smale QRS-komplekser og uten tydelige P-bølger.',
+ act:['Vurder pasienten: blodtrykk, bevissthet, brystsmerter og tungpust.','Varsle lege, og ta 12-avlednings-EKG mens rytmen pågår hvis du kan.','Vagusmanøver eller medisin, for eksempel adenosin, gis etter ordinasjon og lokal prosedyre.','Er pasienten sterkt påvirket, tilkall hjelp med en gang.'],
+ tip:'Spør pasienten hvordan anfallet startet. Brå start og brå slutt passer med SVT.'},
+{id:'ves', group:'Fra ventriklene', nav:'Ventrikulære ekstraslag (VES)', name:'Ventrikulære ekstrasystoler (VES)', tags:[['Følg med','watch']],
+ short:'Ekstra slag som starter i ventriklene, før det vanlige slaget rekker å komme.',
+ facts:['Som grunnrytmen','Uregelmessig på grunn av ekstraslagene','Mangler foran ekstraslaget','Ikke for ekstraslaget','Bred og annerledes i ekstraslaget'],
+ what:'Et område i ventrikkelen fyrer før sinusknuten rekker det. Impulsen tar en omvei gjennom muskelen, derfor blir komplekset bredt og rart.',
+ rec:'Et tidlig, bredt slag uten P-bølge, ofte etterfulgt av en lengre pause. Pasienten kan kjenne det som at hjertet «hopper over».',
+ act:['Enkeltstående ekstraslag er vanlige og ofte ufarlige.','Følg med hvis de blir hyppigere, kommer to og to eller i serier.','Tenk på kalium, magnesium, oksygenmangel og hjerteinfarkt. Sjekk nye prøvesvar.','Varsle lege ved økende antall, eller hvis pasienten har brystsmerter eller er påvirket.'],
+ tip:'Et ekstraslag som treffer toppen av T-bølgen, kalt R-på-T, kan i sjeldne tilfeller utløse ventrikkeltakykardi eller ventrikkelflimmer.'},
+{id:'vt', group:'Fra ventriklene', nav:'Ventrikkeltakykardi (VT)', name:'Ventrikkeltakykardi (VT)', tags:[['Haster','urgent'],['Kan gi hjertestans','watch']],
+ short:'Ventriklene slår fort på egen hånd. Kan gi hjertestans.',
+ facts:['Over 100, ofte 150–250','Regelmessig','Ikke synlige','Kan ikke måles','Bred'],
+ what:'Ventriklene har tatt over styringen og slår fort på egen hånd. Hjertet rekker ikke å fylle seg, og blodtrykket kan falle kraftig.',
+ rec:'Rask rytme med brede komplekser som ligner hverandre. Kan gå over i ventrikkelflimmer.',
+ act:['Gå til pasienten, ikke til monitoren. Kjenn etter puls og sjekk bevissthet.','Ingen puls og ingen normal pust betyr hjertestans: tilkall hjertestansteam, start HLR og defibriller så raskt som mulig.','Har pasienten puls: tilkall lege straks, gi oksygen ved behov og ha defibrillatoren klar.'],
+ tip:'En rask rytme med brede komplekser behandles som VT til noe annet er bevist.'},
+{id:'vf', group:'Fra ventriklene', nav:'Ventrikkelflimmer (VF)', name:'Ventrikkelflimmer (VF)', tags:[['Hjertestans','urgent']],
+ short:'Ventriklene skjelver uten å pumpe. Dette er hjertestans.',
+ facts:['Kan ikke telles','Kaotisk','Ingen','Ingen','Ingen'],
+ what:'Ventriklene skjelver ukoordinert. Hjertet pumper ikke blod, selv om det er elektrisk aktivitet.',
+ rec:'Uregelmessige bølger uten gjenkjennelige komplekser. Pasienten er bevisstløs og uten puls.',
+ act:['Tilkall hjertestansteam og start HLR med 30 kompresjoner og 2 innblåsninger.','Defibriller så raskt som mulig. Dette er en sjokkbar rytme.','Følg algoritmen til Norsk resuscitasjonsråd.'],
+ tip:'Ser monitoren slik ut hos en våken pasient som snakker, er det støy fra bevegelse eller løse elektroder.'},
+{id:'asys', group:'Fra ventriklene', nav:'Asystoli', name:'Asystoli', tags:[['Hjertestans','urgent']],
+ short:'Ingen elektrisk aktivitet. Dette er hjertestans.',
+ facts:['0','Ingen','Ingen','Ingen','Ingen'],
+ what:'Det er ingen elektrisk aktivitet i ventriklene. Hjertet står helt stille.',
+ rec:'En nesten flat linje. Sjekk at elektrodene sitter, at kablene er koblet til, og se på en annen avledning. En løs elektrode gir også flat linje.',
+ act:['Tilkall hjertestansteam og start HLR.','Asystoli er ikke sjokkbar. Fortsett HLR og følg algoritmen. Adrenalin gis etter protokoll.','Let etter årsaker som kan behandles, sammen med teamet.'],
+ tip:'Asystoli på monitoren hos en våken pasient er nesten alltid en løs elektrode.'},
+{id:'av1', group:'AV-blokk', nav:'Grad I', name:'AV-blokk grad I', tags:[['Følg med','watch']],
+ short:'Impulsen bruker for lang tid fra atriene til ventriklene, men alle slag kommer fram.',
+ facts:['Som grunnrytmen, ofte normal','Regelmessig','Én foran hver QRS','Over 0,20 s, like lang hver gang','Smal'],
+ what:'Impulsen bruker lengre tid enn normalt gjennom AV-knuten, men alle slag kommer fram til ventriklene.',
+ rec:'Ser ut som sinusrytme, men med lang avstand mellom P og QRS. Mål PR-tiden: mer enn fem små ruter.',
+ act:['Gir sjelden symptomer.','Sjekk medisiner som bremser AV-knuten, som betablokkere, kalsiumblokkere og digitalis.','Si fra hvis PR-tiden øker, eller hvis rytmen går over i en høyere grad av blokk.'],
+ tip:'Følg med på PR-tiden over tid. Det er endringen som er viktig.'},
+{id:'av2a', group:'AV-blokk', nav:'Grad II, type 1 (Wenckebach)', name:'AV-blokk grad II, type 1 (Wenckebach)', tags:[['Følg med','watch']],
+ short:'Ventetiden blir lengre og lengre, til ett slag faller ut.',
+ facts:['Ofte litt lav','Uregelmessig, i grupper','Regelmessige, men ikke alle følges av QRS','Blir lengre og lengre','Smal'],
+ what:'AV-knuten blir gradvis mer sliten for hvert slag, til den lar én impuls gå tapt. Så hviler den seg, og syklusen starter på nytt.',
+ rec:'PR-tiden øker fra slag til slag, så kommer en P-bølge uten QRS etter seg. Slagene kommer i små grupper.',
+ act:['Ofte godartet, særlig om natten og hos unge.','Vurder pasienten og mål blodtrykk.','Varsle lege hvis det er nytt, ved symptomer eller ved akutt hjertesykdom.'],
+ tip:'Tenk «lengre, lengre, lengre, borte», og så starter det på nytt.'},
+{id:'av2b', group:'AV-blokk', nav:'Grad II, type 2 (Mobitz II)', name:'AV-blokk grad II, type 2 (Mobitz II)', tags:[['Haster','urgent']],
+ short:'Ventetiden er lik, men plutselig faller et slag ut uten forvarsel.',
+ facts:['Ofte lav','Uregelmessig når slag faller ut','Regelmessige, men ikke alle følges av QRS','Like lang hver gang','Smal eller bred'],
+ what:'Blokken sitter lenger nede i ledningssystemet. Uten forvarsel stopper en impuls opp.',
+ rec:'PR-tiden er lik for alle slagene som kommer fram, men plutselig mangler QRS etter en P-bølge.',
+ act:['Mer alvorlig enn type 1, fordi den kan gå over i totalt AV-blokk.','Varsle lege og sørg for kontinuerlig overvåkning.','Ha utstyr for pacing tilgjengelig etter lokal prosedyre.'],
+ tip:'Forskjellen fra Wenckebach: her varsler ikke PR-tiden at et slag er i ferd med å falle ut.'},
+{id:'av3', group:'AV-blokk', nav:'Grad III (totalt blokk)', name:'AV-blokk grad III (totalt AV-blokk)', tags:[['Haster','urgent']],
+ short:'Ingen impulser kommer fram. Atriene og ventriklene slår hver for seg.',
+ facts:['Ofte 20–40 i ventriklene','Regelmessig, men P og QRS går i hver sin takt','Regelmessige, uten sammenheng med QRS','Varierer tilfeldig','Ofte bred'],
+ what:'Ingen impulser kommer gjennom fra atriene til ventriklene. Ventriklene starter sin egen, langsomme reserverytme.',
+ rec:'P-bølgene marsjerer jevnt for seg selv, og QRS-kompleksene gjør det samme i et mye langsommere tempo.',
+ act:['Vurder pasienten straks: bevissthet, blodtrykk og hudfarge. Pasienten kan besvime plutselig.','Varsle lege umiddelbart og sørg for kontinuerlig overvåkning.','Ha defibrillator med pacing-funksjon klar. Medisiner og pacing gis etter ordinasjon.'],
+ tip:'Se etter P-bølger som dukker opp på uventede steder, også inne i QRS eller T.'},
+{id:'pace', group:'Pacemaker', nav:'Pacemakerrytme', name:'Pacemakerrytme', tags:[['Vanlig','ok']],
+ short:'En pacemaker gir hjertet en elektrisk puls når det trenger det.',
+ facts:['Innstilt frekvens, ofte 60–70','Regelmessig','Avhenger av type pacemaker','Ikke aktuelt her','Bred etter ventrikkelpacing'],
+ what:'Pacemakeren sender en liten elektrisk puls når hjertets egen rytme er for langsom. Her stimulerer den ventrikkelen.',
+ rec:'En smal, loddrett strek (spike) rett før hvert brede QRS-kompleks.',
+ act:['Sjekk at hver spike følges av et QRS-kompleks. Spike uten kompleks betyr at pacemakeren ikke får tak.','Frekvens under pacemakerens innstilte grense kan bety at den ikke fungerer som den skal.','Noter type pacemaker og innstilling, og varsle lege ved avvik.'],
+ tip:'Mange monitorer viser bare spikene når pacemakerfunksjonen er slått på.'}
+];
+RH.forEach(r=>{ r.make = GEN[r.id]; });
+const byId = Object.fromEntries(RH.map(r=>[r.id,r]));
+const GROUPS = [...new Set(RH.map(r=>r.group))];
+const FACT_LABELS = ['Frekvens','Rytme','P-bølger','PR-tid','QRS'];
+
+const $ = s => document.querySelector(s);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const state = { id:'sinus', mode: reduced ? 'paper' : 'monitor', notes:true, quiz:null, running:true };
+const current = () => state.quiz ? state.quiz.id : state.id;
+
+/* Navigasjon */
+function buildNav(){
+  const list=$('#navList'), sel=$('#sel');
+  GROUPS.forEach(g=>{
+    const d=document.createElement('div'); d.className='grp';
+    const h=document.createElement('p'); h.className='grp-h'; h.textContent=g; d.appendChild(h);
+    const og=document.createElement('optgroup'); og.label=g;
+    RH.filter(r=>r.group===g).forEach(r=>{
+      const b=document.createElement('button'); b.type='button'; b.className='rbtn'; b.dataset.id=r.id; b.textContent=r.nav;
+      b.addEventListener('click',()=>choose(r.id)); d.appendChild(b);
+      const o=document.createElement('option'); o.value=r.id; o.textContent=g==='AV-blokk' ? 'AV-blokk '+r.nav.charAt(0).toLowerCase()+r.nav.slice(1) : r.nav; og.appendChild(o);
+    });
+    list.appendChild(d); sel.appendChild(og);
+  });
+  sel.addEventListener('change',()=>choose(sel.value));
+}
+function choose(id){ state.quiz=null; state.id=id; render(); loadRhythm(); }
+
+/* Visning */
+function render(){
+  const q=state.quiz, r=byId[state.id];
+  document.querySelectorAll('.rbtn').forEach(b=>b.setAttribute('aria-current', (!q && b.dataset.id===state.id) ? 'true' : 'false'));
+  $('#sel').value=state.id;
+  $('#mLearn').setAttribute('aria-pressed', String(!q));
+  $('#mQuiz').setAttribute('aria-pressed', String(!!q));
+
+  if(q){
+    $('#rName').textContent='Hvilken rytme er dette?';
+    $('#rTags').innerHTML='<span class="tag tag-ok">'+q.score+' av '+q.total+' riktige</span>';
+    $('#rShort').textContent='Se på EKG-et og velg rytmen du tror det er. Bytt gjerne til utskrift og bruk de fem stegene nederst på siden.';
+    $('#details').hidden=true;
+    renderQuiz();
+    $('#ecgBox').setAttribute('aria-label','EKG av en ukjent rytme');
+  } else {
+    $('#quizBox').hidden=true; $('#details').hidden=false;
+    $('#rName').textContent=r.name;
+    $('#rTags').innerHTML=r.tags.map(t=>'<span class="tag tag-'+t[1]+'">'+t[0]+'</span>').join('');
+    $('#rShort').textContent=r.short;
+    $('#facts').innerHTML=r.facts.map((f,i)=>'<div><dt>'+FACT_LABELS[i]+'</dt><dd>'+f+'</dd></div>').join('');
+    $('#tWhat').textContent=r.what;
+    $('#tRec').textContent=r.rec;
+    $('#tAct').innerHTML=r.act.map(a=>'<li>'+a+'</li>').join('');
+    $('#tTip').textContent=r.tip; $('#tTip').hidden=!r.tip;
+    $('#ecgBox').setAttribute('aria-label','EKG som viser '+r.name.toLowerCase().replace('(svt)','(SVT)').replace('(ves)','(VES)').replace('(vt)','(VT)').replace('(vf)','(VF)').replace('av-blokk','AV-blokk'));
+  }
+  const mon = state.mode==='monitor';
+  $('#bMon').setAttribute('aria-pressed', String(mon));
+  $('#bPaper').setAttribute('aria-pressed', String(!mon));
+  $('#bPause').hidden=!mon; $('#bPause').textContent=state.running ? 'Pause' : 'Spill av';
+  $('#bNotes').hidden=mon || !!q; $('#bNotes').setAttribute('aria-pressed', String(state.notes));
+  $('#monWrap').hidden=!mon; $('#paperWrap').hidden=mon;
+  $('#cap').textContent = mon
+    ? (q ? 'Pause monitoren eller bytt til utskrift hvis du vil se nærmere.' : 'Slik ser rytmen ut på en overvåkningsmonitor. Bytt til utskrift for å se bølgene merket og rutene på EKG-papiret.')
+    : 'Seks sekunder papirutskrift. Papiret går med 25 mm i sekundet: en liten rute er 0,04 sekunder, en stor rute 0,2 sekunder. Tell QRS-kompleksene og gang med 10, så har du frekvensen.';
+}
+
+/* Test deg selv */
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function startQuiz(){ state.quiz={score:0,total:0,id:null}; nextQ(); }
+function nextQ(){
+  const q=state.quiz; let id;
+  do { id=RH[Math.floor(Math.random()*RH.length)].id; } while(id===q.id);
+  const g=byId[id].group;
+  const same=shuffle(RH.filter(r=>r.group===g && r.id!==id).map(r=>r.id)).slice(0,2);
+  const rest=shuffle(RH.filter(r=>r.id!==id && !same.includes(r.id)).map(r=>r.id));
+  const opts=[id,...same]; while(opts.length<4) opts.push(rest.shift());
+  q.id=id; q.opts=shuffle(opts); q.answer=null;
+  render(); loadRhythm();
+}
+function renderQuiz(){
+  const q=state.quiz, box=$('#quizBox'); box.hidden=false;
+  let h='<div class="quiz-opts">';
+  q.opts.forEach(id=>{
+    let cls='qopt';
+    if(q.answer){ if(id===q.id) cls+=' is-right'; else if(id===q.answer) cls+=' is-wrong'; }
+    h+='<button type="button" class="'+cls+'" data-id="'+id+'"'+(q.answer?' aria-disabled="true"':'')+'>'+byId[id].name+'</button>';
+  });
+  h+='</div>';
+  if(q.answer){
+    const ok=q.answer===q.id, r=byId[q.id];
+    h+='<div class="qfb"><p><strong>'+(ok?'Riktig.':'Ikke helt.')+'</strong> '+(ok?'':'Riktig svar: '+r.name+'. ')+r.short+'</p>'+
+       '<div class="qact"><button type="button" class="btn btn-primary" id="qNext">Neste rytme</button><button type="button" class="btn" id="qRead">Les mer om rytmen</button></div></div>';
+  }
+  box.innerHTML=h;
+  box.querySelectorAll('.qopt').forEach(b=>b.addEventListener('click',()=>{
+    if(q.answer) return;
+    q.answer=b.dataset.id; q.total++; if(q.answer===q.id) q.score++;
+    render(); const n=$('#qNext'); if(n) n.focus();
+  }));
+  const n=$('#qNext'); if(n) n.addEventListener('click',nextQ);
+  const rd=$('#qRead'); if(rd) rd.addEventListener('click',()=>choose(q.id));
+}
+
+/* Monitor */
+const mon={cv:$('#mon'),ctx:null,W:0,H:0,pxs:0,cols:[],x:0,xs:0,b:null,g:null,lastTs:null,lastR:null,rrs:[],raf:0,filled:false};
+function setHR(v){ $('#hr').textContent=v; }
+function monSize(){
+  const c=mon.cv, w=c.clientWidth, h=c.clientHeight; if(!w) return;
+  const lt = mon.pxs ? (mon.x-mon.xs)/mon.pxs : 0;
+  const dpr=window.devicePixelRatio||1;
+  c.width=Math.round(w*dpr); c.height=Math.round(h*dpr);
+  mon.ctx=c.getContext('2d'); mon.ctx.setTransform(dpr,0,0,dpr,0,0);
+  mon.W=w; mon.H=h;
+  const ws=Math.min(8,Math.max(3,w/130)); mon.pxs=w/ws;
+  mon.cols=new Array(Math.ceil(w)).fill(null);
+  mon.x=0; mon.xs=-lt*mon.pxs;
+  if(mon.g){ advance(ws*0.98, true); }
+  drawMon();
+}
+function monSwitch(id){
+  mon.b=new B(); mon.g=byId[id].make(mon.b, rng(hash(id)+11));
+  mon.xs=mon.x; mon.lastR=null; mon.rrs=[]; setHR('---');
+}
+function advance(dt, silent){
+  if(!mon.g || !mon.pxs) return;
+  const x0=mon.x; mon.x+=dt*mon.pxs;
+  const lt0=(x0-mon.xs)/mon.pxs, lt1=(mon.x-mon.xs)/mon.pxs;
+  mon.g.fill(lt1+1.5);
+  const W=mon.cols.length, base=mon.g.base, st=1/(3*mon.pxs);
+  for(let xi=Math.floor(x0)+1; xi<=Math.floor(mon.x); xi++){
+    const col=((xi%W)+W)%W, t=(xi-mon.xs)/mon.pxs;
+    mon.cols[col]=[mon.b.v(t-2*st,base), mon.b.v(t-st,base), mon.b.v(t,base)];
+  }
+  if(!silent){
+    for(const r of mon.b.rs){ if(r>lt0 && r<=lt1){
+      if(mon.lastR!=null){ mon.rrs.push(r-mon.lastR); if(mon.rrs.length>5) mon.rrs.shift();
+        const avg=mon.rrs.reduce((a,b)=>a+b,0)/mon.rrs.length; setHR(Math.round(60/avg)); }
+      mon.lastR=r; } }
+  }
+  if(mon.b.comps.length>400){ const cut=lt1-1; mon.b.comps=mon.b.comps.filter(c=>c.c>cut); mon.b.rs=mon.b.rs.filter(r=>r>cut); mon.b.notes=[]; }
+}
+function drawMon(){
+  const ctx=mon.ctx; if(!ctx) return; const W=mon.W, H=mon.H;
+  ctx.fillStyle=css('--mon-bg')||'#100118'; ctx.fillRect(0,0,W,H);
+  const y0=H*0.6, k=(y0-26)/2.0;
+  ctx.strokeStyle='rgba(183,177,255,0.10)'; ctx.lineWidth=1; ctx.beginPath();
+  for(let x=0; x<W; x+=mon.pxs*0.2){ const xx=Math.round(x)+0.5; ctx.moveTo(xx,0); ctx.lineTo(xx,H); }
+  for(let m=-4; m<=6; m++){ const y=Math.round(y0-m*0.5*k)+0.5; if(y<0||y>H) continue; ctx.moveTo(0,y); ctx.lineTo(W,y); }
+  ctx.stroke();
+  const n=mon.cols.length; if(!n) return;
+  const cur=((Math.floor(mon.x)%n)+n)%n;
+  ctx.strokeStyle='#FFFFFF'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.beginPath();
+  let pen=false;
+  for(let c=0;c<n;c++){
+    const d=(c-cur+n)%n, v=mon.cols[c];
+    if((d>0 && d<=18) || !v){ pen=false; continue; }
+    for(let j=0;j<3;j++){ const x=c-2/3+j/3, y=y0-v[j]*k; if(!pen){ ctx.moveTo(x,y); pen=true; } else ctx.lineTo(x,y); }
+  }
+  ctx.stroke();
+  const v=mon.cols[cur];
+  if(v && state.running){ ctx.fillStyle='#B7B1FF'; ctx.beginPath(); ctx.arc(cur, y0-v[2]*k, 3, 0, TAU); ctx.fill(); }
+}
+function frame(ts){
+  mon.raf=0;
+  if(state.mode!=='monitor' || !state.running){ mon.lastTs=null; return; }
+  if(mon.lastTs==null) mon.lastTs=ts;
+  const dt=Math.min(0.06,(ts-mon.lastTs)/1000); mon.lastTs=ts;
+  advance(dt); drawMon();
+  mon.raf=requestAnimationFrame(frame);
+}
+function ensureLoop(){ if(state.mode==='monitor' && state.running && !mon.raf){ mon.lastTs=null; mon.raf=requestAnimationFrame(frame); } }
+
+/* Papirutskrift */
+const LIMITS={P:99,QRS:1,T:1,wide:1,VES:99,Spike:2,F:4,lbl:1,drop:99,br:99};
+function drawPaper(){
+  const wrap=$('#paperWrap'); if(wrap.hidden) return;
+  const avail=wrap.clientWidth; if(!avail) return;
+  const pxmm=Math.max(5,avail/150), W=Math.round(150*pxmm), H=Math.round(48*pxmm);
+  const cv=$('#paper'), dpr=window.devicePixelRatio||1;
+  cv.style.width=W+'px'; cv.style.height=H+'px'; cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+  const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle=css('--paper')||'#ECEBFF'; ctx.fillRect(0,0,W,H);
+  ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(103,4,255,0.10)'; ctx.beginPath();
+  for(let i=0;i<=150;i++){ if(i%5===0) continue; const x=Math.round(i*pxmm)+0.5; ctx.moveTo(x,0); ctx.lineTo(x,H); }
+  for(let j=0;j<=48;j++){ if(j%5===0) continue; const y=Math.round(j*pxmm)+0.5; ctx.moveTo(0,y); ctx.lineTo(W,y); }
+  ctx.stroke();
+  ctx.strokeStyle='rgba(103,4,255,0.30)'; ctx.beginPath();
+  for(let i=0;i<=150;i+=5){ const x=Math.round(i*pxmm)+0.5; ctx.moveTo(x,0); ctx.lineTo(x,H); }
+  for(let j=0;j<=48;j+=5){ const y=Math.round(j*pxmm)+0.5; ctx.moveTo(0,y); ctx.lineTo(W,y); }
+  ctx.stroke();
+
+  const id=current(), b=new B(), g=byId[id].make(b, rng(hash(id)+3)); g.fill(6.8);
+  const y0=27*pxmm, X=t=>t*25*pxmm, Y=mv=>y0-mv*10*pxmm, v=t=>b.v(t,g.base);
+  ctx.strokeStyle='#100118'; ctx.lineWidth=Math.max(1.6,pxmm*0.32); ctx.lineJoin='round'; ctx.lineCap='round'; ctx.beginPath();
+  const N=W*4;
+  for(let i=0;i<=N;i++){ const t=i/N*6, x=X(t), y=Y(v(t)); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
+  ctx.stroke();
+
+  if(state.notes && !state.quiz){
+    const fs=Math.round(Math.max(11,pxmm*2.2));
+    ctx.font='600 '+fs+'px "TV 2 Text", Arial, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    const counts={}; const notes=b.notes.slice().sort((a,c)=>(a.t!=null?a.t:a.t1)-(c.t!=null?c.t:c.t1));
+    for(const n of notes){
+      const tt=n.t!=null?n.t:n.t1; if(tt<0.03 || (n.t2||tt)>5.97) continue;
+      counts[n.k]=(counts[n.k]||0)+1; if(counts[n.k]>LIMITS[n.k]) continue;
+      if(n.k==='br'){
+        const y=Y(-0.62), x1=X(n.t1), x2=X(n.t2);
+        ctx.strokeStyle='#6704FF'; ctx.lineWidth=1.5; ctx.beginPath();
+        ctx.moveTo(x1,y-4); ctx.lineTo(x1,y+4); ctx.moveTo(x1,y); ctx.lineTo(x2,y); ctx.moveTo(x2,y-4); ctx.lineTo(x2,y+4); ctx.stroke();
+        ctx.fillStyle='#4D04B1'; ctx.fillText(n.text,(x1+x2)/2, y+fs+4);
+      } else if(n.k==='drop'){
+        ctx.fillStyle='#4D04B1'; ctx.fillText(n.text, X(n.t), Y(-0.55)+fs);
+      } else {
+        let m=-9; for(let s=n.t-0.05; s<=n.t+0.05; s+=0.004) m=Math.max(m,v(s));
+        ctx.fillStyle='#4D04B1'; ctx.fillText(n.text, X(n.t), Y(m)-Math.max(6,pxmm*1.4));
+      }
+    }
+  }
+}
+
+function loadRhythm(){ monSwitch(current()); if(!mon.filled && mon.pxs){ advance(mon.W/mon.pxs*0.98, true); mon.filled=true; } drawMon(); drawPaper(); ensureLoop(); }
+
+/* Hendelser */
+$('#mLearn').addEventListener('click',()=>{ if(!state.quiz) return; state.quiz=null; render(); loadRhythm(); });
+$('#mQuiz').addEventListener('click',()=>{ if(state.quiz) return; startQuiz(); });
+$('#bMon').addEventListener('click',()=>{ state.mode='monitor'; render(); monSize(); ensureLoop(); });
+$('#bPaper').addEventListener('click',()=>{ state.mode='paper'; render(); drawPaper(); });
+$('#bPause').addEventListener('click',()=>{ state.running=!state.running; render(); drawMon(); ensureLoop(); });
+$('#bNotes').addEventListener('click',()=>{ state.notes=!state.notes; render(); drawPaper(); });
+
+let rq=0;
+new ResizeObserver(()=>{ if(rq) return; rq=requestAnimationFrame(()=>{ rq=0; if(state.mode==='monitor') monSize(); else drawPaper(); }); }).observe($('#ecgBox'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ drawMon(); drawPaper(); });
+
+buildNav();
+render();
+monSize();
+loadRhythm();
+})();
+</script>
+</body>
+</html>
