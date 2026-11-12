@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gangetabellen</title>
+<style>
+:root{
+  --bg:#ECEBFF; --surface:#FFFFFF; --text:#100118; --text-2:#4D04B1;
+  --accent:#6704FF; --accent-hover:#4D04B1; --on-accent:#FFFFFF;
+  --border:#B7B1FF; --border-strong:#6704FF;
+  --l0:#FFFFFF; --l1:#DCD8FF; --l2:#B7B1FF; --l3:#6704FF; --l3-text:#FFFFFF; --head:#4D04B1;
+  --error:#DC0E2A; --on-error:#FFFFFF;
+  --key:#FFFFFF; --key-hover:#DCD8FF; --focus:#6704FF;
+  --font-display:"TV 2 Display", Arial, sans-serif;
+  --font-text:"TV 2 Text", Arial, sans-serif;
+  --b1:120ms; --b2:280ms; --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#100118; --surface:#190036; --text:#FFFFFF; --text-2:#B7B1FF;
+    --accent:#6704FF; --accent-hover:#7F2EFF; --on-accent:#FFFFFF;
+    --border:#310268; --border-strong:#6704FF;
+    --l0:#190036; --l1:#310268; --l2:#4D04B1; --l3:#6704FF; --l3-text:#FFFFFF; --head:#B7B1FF;
+    --key:#190036; --key-hover:#310268; --focus:#B7B1FF;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#100118; --surface:#190036; --text:#FFFFFF; --text-2:#B7B1FF;
+  --accent:#6704FF; --accent-hover:#7F2EFF; --on-accent:#FFFFFF;
+  --border:#310268; --border-strong:#6704FF;
+  --l0:#190036; --l1:#310268; --l2:#4D04B1; --l3:#6704FF; --l3-text:#FFFFFF; --head:#B7B1FF;
+  --key:#190036; --key-hover:#310268; --focus:#B7B1FF;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:var(--font-text);font-size:17px;line-height:1.45}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-0.02em;font-weight:700;margin:0}
+
+.screen{max-width:560px;margin:0 auto;padding:24px 20px 40px}
+.intro h1{font-size:clamp(44px,12vw,72px);line-height:1;overflow-wrap:anywhere}
+.lead{font-family:var(--font-display);font-size:19px;line-height:1.4;margin:12px 0 0;max-width:34em}
+
+.profiles{display:grid;gap:10px;margin-top:28px}
+.profiles:empty{display:none}
+.pbtn{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:68px;padding:10px 18px;border-radius:12px;border:1px solid var(--border);background:var(--surface);text-align:left;transition:background var(--b1) var(--ease),transform var(--b1) var(--ease)}
+.pbtn:hover{background:var(--key-hover)}
+.pbtn:active{transform:scale(.97)}
+.pbtn b{font-family:var(--font-display);font-size:22px;letter-spacing:-0.02em;overflow-wrap:anywhere}
+.pbtn span{color:var(--text-2);font-weight:700;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.newp{margin-top:16px}
+.row{display:flex;gap:8px}
+.row input{flex:1;min-width:0;height:52px;border-radius:12px;border:1px solid var(--border-strong);background:var(--key);padding:0 14px;font-size:17px}
+.row input::placeholder{color:var(--text-2);opacity:1}
+.err{margin:0;min-height:1.4em;font-weight:700;color:var(--text)}
+.sync{margin:20px 0 0;font-size:15px;color:var(--text-2)}
+
+.map-wrap{margin-top:28px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px}
+.map-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.map-head h2{font-size:22px}
+.count{margin:0;color:var(--text-2);font-weight:700;font-variant-numeric:tabular-nums}
+.map{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+.hd{display:flex;align-items:center;justify-content:center;aspect-ratio:1;font-size:13px;font-weight:700;color:var(--head);font-variant-numeric:tabular-nums}
+.cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:clamp(10px,2.8vw,14px);font-weight:700;font-variant-numeric:tabular-nums;transition:background var(--b2) var(--ease)}
+.lv0{background:var(--l0);box-shadow:inset 0 0 0 1px var(--border)}
+.lv1{background:var(--l1)}
+.lv2{background:var(--l2)}
+.lv3{background:var(--l3);color:var(--l3-text)}
+.fresh{animation:fresh var(--b2) var(--ease) both}
+@keyframes fresh{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+.legend{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:14px 0 0;font-size:14px;color:var(--text-2)}
+.sw{width:14px;height:14px;border-radius:4px;display:inline-block;margin-left:10px}
+.sw:first-child{margin-left:0}
+
+.modes{display:grid;gap:12px;margin-top:16px}
+.mode{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;display:grid;gap:14px}
+.mode h3{font-size:24px}
+.mode p{margin:4px 0 0}
+.rec{color:var(--text-2);font-weight:700;font-size:15px}
+.chips-label{margin:0;font-size:15px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--border);background:transparent;border-radius:999px;min-width:44px;height:40px;padding:0 14px;font-weight:700;font-variant-numeric:tabular-nums;transition:background var(--b1) var(--ease)}
+.chip:hover{background:var(--key-hover)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip[aria-pressed="true"]:hover{background:var(--accent-hover)}
+.btn{height:52px;border-radius:12px;border:1px solid var(--border-strong);background:transparent;font-weight:700;font-size:17px;padding:0 20px;transition:background var(--b1) var(--ease),transform var(--b1) var(--ease)}
+.btn:hover{background:var(--key-hover)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 16px;margin-top:20px}
+.link{background:none;border:0;padding:10px 0;color:var(--text-2);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+.play{height:100%;display:flex;flex-direction:column;padding:8px 16px 16px}
+.bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;min-height:52px}
+.bar .link{justify-self:start}
+.hud{font-weight:700;color:var(--text-2);font-variant-numeric:tabular-nums}
+.timer{justify-self:end;font-family:var(--font-display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;padding:0 8px;border-radius:8px;transition:background var(--b1),color var(--b1)}
+.timer.low{background:var(--error);color:var(--on-error)}
+.progress{height:4px;background:var(--l1);border-radius:2px;overflow:hidden}
+.progress div{height:100%;width:0;background:var(--accent);transition:width var(--b2) var(--ease)}
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.prob{font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;font-size:clamp(44px,15vw,104px);line-height:1;display:flex;align-items:center;gap:.18em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.op{color:var(--text-2);font-weight:400}
+.ans{display:inline-block;min-width:1.6em;padding:.04em .12em;border-bottom:.07em solid var(--border-strong);border-radius:.08em .08em 0 0;transition:background var(--b1) var(--ease),color var(--b1) var(--ease)}
+.ans.empty{color:var(--border)}
+.ans.ok{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.ans.bad{background:var(--error);color:var(--on-error);border-color:var(--error)}
+.cd{font-size:1.4em}
+.enter{animation:enter var(--b2) var(--ease) both}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg{min-height:3em;margin:22px 0 0;font-weight:700;color:var(--text-2);max-width:26em}
+.msg.strong{color:var(--text)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;max-width:420px;width:100%;align-self:center}
+.key{height:clamp(54px,9vh,72px);border-radius:12px;border:1px solid var(--border);background:var(--key);font-family:var(--font-display);font-size:28px;font-weight:700;transition:background var(--b1) var(--ease),transform var(--b1) var(--ease)}
+.key:hover{background:var(--key-hover)}
+.key:active{transform:scale(.97);background:var(--key-hover)}
+.key-del{font-family:var(--font-text);font-size:17px}
+.key-ok{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-size:20px}
+.key-ok:hover,.key-ok:active{background:var(--accent-hover)}
+
+.res .score{font-size:clamp(88px,28vw,168px);line-height:.9;margin-top:16px;font-variant-numeric:tabular-nums}
+.res .of{font-size:.3em;color:var(--text-2);letter-spacing:0;margin-left:.1em}
+.res p{margin:10px 0 0}
+.res h2{font-size:22px;margin-top:32px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.pill{border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--surface)}
+.pill b{display:block;font-family:var(--font-display);font-size:19px;font-variant-numeric:tabular-nums}
+.pill span{font-size:13px;color:var(--text-2)}
+.actions{display:grid;gap:10px;margin-top:32px}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition-duration:0s!important}
+}
+</style>
+</head>
+<body>
+
+<main id="who" class="screen" hidden>
+  <header class="intro">
+    <h1>Gangetabellen</h1>
+    <p class="lead">Hvem skal spille?</p>
+  </header>
+  <div id="profiles" class="profiles"></div>
+  <div class="mode newp">
+    <label class="chips-label" for="nameIn">Ny spiller</label>
+    <div class="row">
+      <input id="nameIn" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Skriv navnet ditt">
+      <button class="btn primary" id="saveName">Lagre</button>
+    </div>
+    <p class="err" id="nameErr" aria-live="polite"></p>
+  </div>
+  <p class="sync" id="syncStatus" aria-live="polite"></p>
+</main>
+
+<main id="home" class="screen" hidden>
+  <header class="intro">
+    <h1 id="hello">Gangetabellen</h1>
+    <p class="lead">Øv deg opp til gangeprøven: 100 stykker på fem minutter. Hver gang du svarer raskt og riktig, fyller du ut mer av kartet.</p>
+  </header>
+
+  <section class="map-wrap" aria-labelledby="mapTitle">
+    <div class="map-head">
+      <h2 id="mapTitle">Kartet ditt</h2>
+      <p id="mapCount" class="count"></p>
+    </div>
+    <div id="map" class="map" role="img"></div>
+    <p class="legend"><span class="sw lv1"></span>På vei <span class="sw lv2"></span>Nesten <span class="sw lv3"></span>Sitter</p>
+  </section>
+
+  <section class="modes">
+    <article class="mode">
+      <div>
+        <h3>Trening</h3>
+        <p>Ingen klokke. Stykkene du strever med, kommer oftest.</p>
+      </div>
+      <p class="chips-label" id="chipsLabel">Øv på gangetabellen for</p>
+      <div class="chips" id="chips" role="group" aria-labelledby="chipsLabel"></div>
+      <button class="btn primary" data-start="trening">Start trening</button>
+    </article>
+    <article class="mode">
+      <div>
+        <h3>Lynrunde</h3>
+        <p>60 sekunder. Så mange riktige som du rekker.</p>
+        <p class="rec" id="recLyn"></p>
+      </div>
+      <button class="btn" data-start="lyn">Start lynrunde</button>
+    </article>
+    <article class="mode">
+      <div>
+        <h3>Gangeprøven</h3>
+        <p>Alle de 100 stykkene fra arket, på fem minutter. Du ser fasiten når du er ferdig.</p>
+        <p class="rec" id="recProve"></p>
+      </div>
+      <button class="btn" data-start="prove">Ta prøven</button>
+    </article>
+  </section>
+
+  <footer class="foot">
+    <button class="link" id="switchBtn">Bytt spiller</button>
+    <button class="link" id="soundBtn"></button>
+    <button class="link" id="resetBtn">Nullstill fremgangen</button>
+  </footer>
+</main>
+
+<section id="play" class="screen play" hidden>
+  <div class="bar">
+    <button class="link" id="quitBtn">Avslutt</button>
+    <div class="hud" id="hud"></div>
+    <div class="timer" id="timer"></div>
+  </div>
+  <div class="progress" id="progress" hidden><div id="progressFill"></div></div>
+  <div class="stage">
+    <div class="prob" id="prob"></div>
+    <p class="msg" id="msg" aria-live="polite"></p>
+  </div>
+  <div class="pad" id="pad"></div>
+</section>
+
+<section id="result" class="screen res" hidden></section>
+
+<script>
+/* =====================================================================
+   SKYLAGRING (valgfritt)
+   Står feltene tomme, lagres spillerne bare i nettleseren på enheten.
+   Fyll inn adresse og nøkkel fra Supabase for å lagre dem i skyen,
+   så de kan spille videre på hvilken som helst enhet.
+   ===================================================================== */
+const SKY = {
+  url: '',   // f.eks. 'https://abcdefgh.supabase.co'
+  key: ''    // anon- eller publishable-nøkkelen fra Supabase
+};
+
+(function(){
+'use strict';
+
+/* De 100 stykkene fra arket, kolonne for kolonne */
+const SHEET=[
+[1,2],[3,3],[1,1],[4,8],[5,4],[0,1],[3,5],[0,9],[7,2],[9,3],[1,6],[9,7],[2,4],[5,8],[5,1],[8,1],[4,2],[9,9],[8,5],[6,8],[6,3],[0,6],[8,7],[7,8],[6,5],
+[8,4],[1,5],[2,1],[1,3],[2,3],[2,5],[9,6],[0,2],[3,4],[7,7],[6,1],[0,4],[4,3],[6,7],[0,5],[5,3],[6,4],[1,4],[0,8],[7,5],[8,8],[2,2],[3,2],[9,1],[0,7],
+[5,2],[4,6],[8,6],[6,2],[3,8],[7,6],[4,7],[7,3],[0,3],[7,1],[8,9],[8,2],[7,9],[5,7],[6,9],[4,1],[5,9],[5,5],[4,9],[9,4],[3,9],[9,8],[9,5],[4,4],[2,9],
+[4,5],[3,1],[5,6],[3,7],[8,3],[1,9],[6,6],[2,8],[9,2],[2,7],[2,6],[1,8],[7,4],[1,7],[3,6],[10,2],[10,4],[10,6],[10,8],[10,1],[10,3],[10,5],[10,7],[10,9],[10,10]
+];
+const ALL=[1,2,3,4,5,6,7,8,9,10];
+const FAST_MS=3500;
+const LKEY='gangetabellen-v2';
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const key=(a,b)=>Math.min(a,b)+'x'+Math.max(a,b);
+const dec=n=>n.toFixed(1).replace('.',',');
+const mmss=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+
+/* ---------- Lagring på enheten ---------- */
+function blank(){return{mastery:{},best:{lyn:0,prove:null,proveMs:null},tables:ALL.slice(),t:0};}
+function normalize(d){
+  const p=blank();
+  if(d&&typeof d==='object'){
+    if(d.mastery&&typeof d.mastery==='object')p.mastery=d.mastery;
+    if(d.best&&typeof d.best==='object')Object.assign(p.best,d.best);
+    if(Array.isArray(d.tables)&&d.tables.length)p.tables=d.tables;
+    if(typeof d.t==='number')p.t=d.t;
+  }
+  return p;
+}
+let DB={profiles:{},current:null,sound:true};
+try{
+  const d=JSON.parse(localStorage.getItem(LKEY)||'null');
+  if(d&&typeof d==='object'){
+    if(d.profiles&&typeof d.profiles==='object')for(const n in d.profiles)DB.profiles[n]=normalize(d.profiles[n]);
+    if(typeof d.current==='string'&&DB.profiles[d.current])DB.current=d.current;
+    if(typeof d.sound==='boolean')DB.sound=d.sound;
+  }
+}catch(e){}
+function saveLocal(){try{localStorage.setItem(LKEY,JSON.stringify(DB))}catch(e){}}
+
+let S=DB.current?DB.profiles[DB.current]:null;
+function save(){
+  if(!S||!DB.current)return;
+  S.t=Date.now();DB.profiles[DB.current]=S;
+  saveLocal();queuePush();
+}
+
+/* ---------- Skyen (Supabase) ---------- */
+const cloudOn=!!(SKY.url&&SKY.key);
+let cloudOk=null,pushT=null,dirty=false;
+const base=()=>SKY.url.replace(/\/+$/,'');
+function headers(write){
+  const h={apikey:SKY.key};
+  if(!SKY.key.startsWith('sb_'))h.Authorization='Bearer '+SKY.key;
+  if(write){h['Content-Type']='application/json';h.Prefer='resolution=merge-duplicates,return=minimal';}
+  return h;
+}
+function timeout(p,ms){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);}
+async function pull(name){
+  const q=name?`&navn=eq.${encodeURIComponent(name)}`:'';
+  const r=await timeout(fetch(`${base()}/rest/v1/spillere?select=navn,data${q}`,{headers:headers(false)}),5000);
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r.json();
+}
+function merge(rows){
+  let changed=false;
+  (rows||[]).forEach(r=>{
+    if(!r||typeof r.navn!=='string')return;
+    const remote=normalize(r.data),local=DB.profiles[r.navn];
+    if(!local||remote.t>local.t){DB.profiles[r.navn]=remote;changed=true;}
+  });
+  if(changed){saveLocal();if(DB.current)S=DB.profiles[DB.current];}
+  return changed;
+}
+function queuePush(){if(!cloudOn)return;dirty=true;clearTimeout(pushT);pushT=setTimeout(()=>push(false),2000);}
+async function push(keepalive){
+  if(!cloudOn||!dirty||!DB.current)return;
+  clearTimeout(pushT);dirty=false;
+  const name=DB.current;
+  const body=JSON.stringify([{navn:name,data:DB.profiles[name]}]);
+  try{
+    const r=await fetch(`${base()}/rest/v1/spillere`,{method:'POST',headers:headers(true),body,keepalive:!!keepalive});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    setCloud(true);
+  }catch(e){dirty=true;setCloud(false);}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')push(true);});
+function setCloud(ok){cloudOk=ok;renderSync();}
+function renderSync(){
+  let t;
+  if(!cloudOn)t='Spillerne lagres i denne nettleseren. På en annen enhet starter du på nytt.';
+  else if(cloudOk===null)t='Henter spillere …';
+  else if(cloudOk)t='Spillerne lagres i skyen, så du kan spille videre på en annen enhet.';
+  else t='Fikk ikke kontakt med skyen. Fremgangen lagres på denne enheten og sendes når kontakten er tilbake.';
+  $('syncStatus').textContent=t;
+}
+
+/* ---------- Lyd ---------- */
+let ac=null;
+function tone(freqs,dur){
+  if(!DB.sound)return;
+  dur=dur||0.08;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const t0=ac.currentTime;
+    freqs.forEach((f,i)=>{
+      const o=ac.createOscillator(),g=ac.createGain(),t=t0+i*0.11;
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.16,t+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur+0.1);
+      o.connect(g);g.connect(ac.destination);
+      o.start(t);o.stop(t+dur+0.15);
+    });
+  }catch(e){}
+}
+
+function show(id){
+  ['who','home','play','result'].forEach(s=>{$(s).hidden=s!==id});
+  window.scrollTo(0,0);
+}
+
+/* ---------- Hvem spiller ---------- */
+function mastered(p){let n=0;for(const k in p.mastery)if(p.mastery[k]&&p.mastery[k].l===3)n++;return n;}
+function renderWho(){
+  const names=Object.keys(DB.profiles).sort((a,b)=>a.localeCompare(b,'nb'));
+  $('profiles').innerHTML=names.map(n=>
+    `<button class="pbtn" data-name="${esc(n)}"><b>${esc(n)}</b><span>${mastered(DB.profiles[n])} av 55 sitter</span></button>`
+  ).join('');
+  renderSync();
+}
+async function openWho(){
+  await push(false);
+  $('nameErr').textContent='';$('nameIn').value='';
+  renderWho();show('who');
+  if(cloudOn){
+    try{merge(await pull(null));setCloud(true);}catch(e){setCloud(false);}
+    if(!$('who').hidden)renderWho();
+  }
+}
+let selecting=false;
+async function selectProfile(name,isNew){
+  if(selecting)return;selecting=true;
+  await push(false);
+  DB.current=name;saveLocal();
+  if(cloudOn&&!isNew){
+    try{merge(await pull(name));setCloud(true);}catch(e){setCloud(false);}
+  }
+  S=DB.profiles[name];
+  if(isNew&&cloudOn){dirty=true;push(false);}
+  selecting=false;
+  renderHome();show('home');
+}
+$('profiles').addEventListener('click',e=>{
+  const b=e.target.closest('.pbtn');if(!b)return;
+  selectProfile(b.dataset.name,false);
+});
+function addName(){
+  const n=$('nameIn').value.trim().replace(/\s+/g,' ');
+  if(!n){$('nameErr').textContent='Skriv et navn først.';$('nameIn').focus();return;}
+  const existing=Object.keys(DB.profiles).find(k=>k.toLocaleLowerCase('nb')===n.toLocaleLowerCase('nb'));
+  if(existing){selectProfile(existing,false);return;}
+  DB.profiles[n]=blank();DB.profiles[n].t=Date.now();saveLocal();
+  selectProfile(n,true);
+}
+$('saveName').addEventListener('click',addName);
+$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addName();}});
+$('switchBtn').addEventListener('click',openWho);
+
+/* ---------- Forsiden ---------- */
+const lvl=(a,b)=>(S.mastery[key(a,b)]||{}).l||0;
+function renderHome(fresh){
+  fresh=fresh||[];
+  $('hello').textContent=`Hei, ${DB.current}`;
+  let h='<div class="hd">·</div>';
+  for(let c=1;c<=10;c++)h+=`<div class="hd">${c}</div>`;
+  const done=new Set();
+  for(let r=1;r<=10;r++){
+    h+=`<div class="hd">${r}</div>`;
+    for(let c=1;c<=10;c++){
+      const k=key(r,c),l=lvl(r,c);
+      if(l===3)done.add(k);
+      const fi=fresh.indexOf(k);
+      h+=`<div class="cell lv${l}${fi>-1?' fresh':''}"${fi>-1?` style="animation-delay:${250+fi*140}ms"`:''}>${l===3?r*c:''}</div>`;
+    }
+  }
+  $('map').innerHTML=h;
+  $('map').setAttribute('aria-label',`Gangetabellkart. ${done.size} av 55 stykker sitter.`);
+  $('mapCount').textContent=`${done.size} av 55 stykker sitter`;
+  $('recLyn').textContent=S.best.lyn?`Rekorden din: ${S.best.lyn} riktige`:'Ingen rekord ennå';
+  $('recProve').textContent=S.best.prove!=null?`Beste: ${S.best.prove}/100 på ${mmss(S.best.proveMs)}`:'Ikke tatt ennå';
+  $('soundBtn').textContent=`Lyd: ${DB.sound?'på':'av'}`;
+  $('resetBtn').textContent='Nullstill fremgangen';
+  renderChips();
+}
+function renderChips(){
+  const all=S.tables.length===10;
+  let h=`<button class="chip" aria-pressed="${all}" data-t="all">Alle</button>`;
+  for(const t of ALL)h+=`<button class="chip" aria-pressed="${!all&&S.tables.includes(t)}" data-t="${t}">${t}</button>`;
+  $('chips').innerHTML=h;
+}
+$('chips').addEventListener('click',e=>{
+  const b=e.target.closest('.chip');if(!b)return;
+  const t=b.dataset.t;
+  if(t==='all')S.tables=ALL.slice();
+  else{
+    const n=+t;
+    if(S.tables.length===10)S.tables=[n];
+    else if(S.tables.includes(n))S.tables=S.tables.filter(x=>x!==n);
+    else S.tables=S.tables.concat(n).sort((a,b)=>a-b);
+    if(!S.tables.length)S.tables=ALL.slice();
+  }
+  save();renderChips();
+});
+$('soundBtn').addEventListener('click',()=>{DB.sound=!DB.sound;saveLocal();$('soundBtn').textContent=`Lyd: ${DB.sound?'på':'av'}`;});
+let resetT=null;
+$('resetBtn').addEventListener('click',()=>{
+  const b=$('resetBtn');
+  if(!resetT){
+    b.textContent=`Trykk igjen for å nullstille ${DB.current}`;
+    resetT=setTimeout(()=>{b.textContent='Nullstill fremgangen';resetT=null;},3000);
+    return;
+  }
+  clearTimeout(resetT);resetT=null;
+  S.mastery={};S.best={lyn:0,prove:null,proveMs:null};save();
+  renderHome();
+});
+
+/* ---------- Spillet ---------- */
+let G=null,lastPool=null,drillPool=null;
+
+function allPairs(tables){
+  const seen=new Set(),out=[];
+  for(const a of tables)for(let b=1;b<=10;b++){
+    const k=key(a,b);if(!seen.has(k)){seen.add(k);out.push([a,b]);}
+  }
+  return out;
+}
+function pick(pool,recent){
+  let tot=0;
+  const w=pool.map(p=>{
+    let x=Math.pow(4-lvl(p[0],p[1]),2)+0.5;
+    if(recent.includes(key(p[0],p[1])))x=0.001;
+    tot+=x;return x;
+  });
+  let r=Math.random()*tot;
+  for(let i=0;i<pool.length;i++){r-=w[i];if(r<=0)return pool[i];}
+  return pool[pool.length-1];
+}
+function record(a,b,ok,ms){
+  if(a===0||b===0)return false;
+  const k=key(a,b);
+  const m=S.mastery[k]||{l:0,n:0,w:0};
+  const before=m.l;
+  m.n++;
+  if(ok){
+    if(ms<FAST_MS)m.l=Math.min(3,m.l+1);
+    else if(m.l===0)m.l=1;
+  }else{
+    m.w++;m.l=Math.max(0,m.l-1);
+  }
+  S.mastery[k]=m;save();
+  return before<3&&m.l===3;
+}
+
+function buildPad(){
+  const keys=['1','2','3','4','5','6','7','8','9','del','0','ok'];
+  $('pad').innerHTML=keys.map(k=>
+    k==='del'?'<button class="key key-del" data-k="del">Slett</button>':
+    k==='ok'?'<button class="key key-ok" data-k="ok">OK</button>':
+    `<button class="key" data-k="${k}">${k}</button>`).join('');
+}
+$('pad').addEventListener('click',e=>{
+  const b=e.target.closest('.key');if(!b)return;
+  const k=b.dataset.k;
+  if(k==='del')del();else if(k==='ok')ok();else press(k);
+});
+
+function stopTimers(){if(G){clearInterval(G.timer);clearTimeout(G.cdT);clearTimeout(G.hintT);clearTimeout(G.nextT);}}
+
+function startGame(mode,customPool){
+  stopTimers();
+  const pool=customPool||(mode==='lyn'?allPairs(ALL):allPairs(S.tables));
+  if(mode==='trening')lastPool=customPool||null;
+  G={mode,pool,recent:[],retry:[],count:0,correct:0,streak:0,bestStreak:0,newMastered:[],
+     results:[],idx:0,input:'',locked:true,q:null,qStart:0,startAt:0,endAt:0,timer:null,done:false};
+  show('play');
+  $('progress').hidden=mode!=='prove';
+  $('progressFill').style.width='0%';
+  $('timer').classList.remove('low');
+  $('timer').textContent=mode==='lyn'?'1:00':mode==='prove'?'5:00':'';
+  updateHud();
+  if(mode==='trening'){G.startAt=performance.now();G.locked=false;next();return;}
+  countdown(()=>{
+    G.startAt=performance.now();
+    G.endAt=G.startAt+(mode==='lyn'?60000:300000);
+    G.timer=setInterval(tick,200);
+    G.locked=false;next();tick();
+  });
+}
+
+function countdown(done){
+  let n=3;
+  setMsg(G.mode==='prove'?'100 stykker. Fem minutter. Gjør deg klar.':'60 sekunder. Gjør deg klar.');
+  const step=()=>{
+    if(!G||G.done)return;
+    if(n===0){done();return;}
+    $('prob').innerHTML=`<span class="cd">${n}</span>`;
+    animate($('prob'));
+    tone([440],0.05);
+    n--;G.cdT=setTimeout(step,650);
+  };
+  step();
+}
+
+function next(){
+  if(!G||G.done)return;
+  let a,b;
+  if(G.mode==='prove'){
+    if(G.idx>=SHEET.length){finish(false);return;}
+    [a,b]=SHEET[G.idx];
+  }else{
+    const due=G.retry.findIndex(r=>r.at<=G.count);
+    if(due>-1){[a,b]=G.retry[due].p;G.retry.splice(due,1);}
+    else{[a,b]=pick(G.pool,G.recent);if(Math.random()<0.5)[a,b]=[b,a];}
+    G.recent.push(key(a,b));
+    while(G.recent.length>Math.min(4,G.pool.length-1))G.recent.shift();
+  }
+  G.q={a,b};G.input='';G.qStart=performance.now();
+  renderQ();updateHud();
+}
+
+function animate(el){el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');}
+
+function renderQ(){
+  const {a,b}=G.q;
+  $('prob').innerHTML=`<span>${a}</span><span class="op">·</span><span>${b}</span><span class="op">=</span><span class="ans" id="ans"></span>`;
+  renderAns();animate($('prob'));setMsg('');
+  clearTimeout(G.hintT);
+  if(G.mode!=='lyn'){
+    G.hintT=setTimeout(()=>{
+      if(G&&!G.done&&!G.locked&&G.input==='')setMsg('Står du fast? Trykk OK for å gå videre.');
+    },8000);
+  }
+}
+function renderAns(){
+  const el=$('ans');if(!el)return;
+  el.textContent=G.input||'?';
+  el.classList.toggle('empty',!G.input);
+}
+function setMsg(t,strong){const m=$('msg');m.textContent=t;m.classList.toggle('strong',!!strong);}
+
+function updateHud(){
+  if(!G)return;
+  let h='';
+  if(G.mode==='trening')h=G.streak>1?`${G.streak} på rad`:`${G.correct} riktige`;
+  else if(G.mode==='lyn')h=`${G.correct} riktige`;
+  else h=`${Math.min(G.idx+1,100)} av 100`;
+  $('hud').textContent=h;
+  if(G.mode==='prove')$('progressFill').style.width=G.idx+'%';
+}
+
+function press(d){
+  if(!G||G.locked||G.done)return;
+  if(G.input.length>=3)return;
+  G.input+=d;renderAns();
+  if(G.input.length>=String(G.q.a*G.q.b).length)submit();
+}
+function del(){if(!G||G.locked)return;G.input=G.input.slice(0,-1);renderAns();}
+function ok(){if(!G||G.locked||G.done)return;submit();}
+
+function after(ms){
+  G.nextT=setTimeout(()=>{if(!G||G.done)return;G.locked=false;next();},ms);
+}
+
+function streakMsg(n){
+  if(n<5||n%5!==0){setMsg('');return;}
+  if(n===5)setMsg('5 riktige på rad.',true);
+  else if(n===10)setMsg('10 på rad. Nå går det unna.',true);
+  else if(n===15)setMsg('15 på rad. Du er i flytsonen.',true);
+  else setMsg(`${n} på rad. Imponerende.`,true);
+}
+
+function submit(){
+  const {a,b}=G.q,ans=a*b;
+  const val=G.input===''?null:parseInt(G.input,10);
+  const right=val===ans;
+  const ms=performance.now()-G.qStart;
+  G.locked=true;G.count++;clearTimeout(G.hintT);
+  const up=record(a,b,right,ms);
+
+  if(G.mode==='prove'){
+    G.results.push({a,b,val,ok:right});
+    if(right)G.correct++;
+    G.idx++;updateHud();
+    if(G.idx>=SHEET.length){finish(false);return;}
+    after(90);return;
+  }
+
+  const el=$('ans');
+  if(right){
+    G.correct++;G.streak++;G.bestStreak=Math.max(G.bestStreak,G.streak);
+    el.classList.remove('empty');el.classList.add('ok');
+    if(up){
+      if(!G.newMastered.includes(key(a,b)))G.newMastered.push(key(a,b));
+      tone([660,880,1175]);
+      setMsg(`Nytt felt på kartet: ${a} · ${b} = ${ans}`,true);
+      after(900);
+    }else{
+      tone([660,880]);streakMsg(G.streak);after(280);
+    }
+  }else{
+    G.streak=0;tone([196],0.16);
+    el.textContent=ans;el.classList.remove('empty');el.classList.add('bad');
+    if(G.mode==='trening'){
+      G.retry.push({p:[a,b],at:G.count+3});
+      setMsg(`${a} · ${b} = ${ans}. Det stykket kommer igjen snart.`,true);
+      after(1700);
+    }else{
+      setMsg(`${a} · ${b} = ${ans}`,true);after(900);
+    }
+  }
+  updateHud();
+}
+
+function tick(){
+  if(!G||G.done)return;
+  const left=G.endAt-performance.now();
+  $('timer').textContent=mmss(left);
+  $('timer').classList.toggle('low',left<10000);
+  if(left<=0)finish(true);
+}
+
+function quit(){
+  if(!G)return;
+  if(G.mode==='trening'&&G.count===0){goHome();return;}
+  if(G.mode!=='trening'&&!G.startAt){goHome();return;}
+  finish(false);
+}
+$('quitBtn').addEventListener('click',quit);
+
+function finish(timeUp){
+  if(!G||G.done)return;
+  G.done=true;G.locked=true;stopTimers();
+  G.timeUp=!!timeUp;
+  const now=performance.now();
+  G.elapsed=G.startAt?(G.endAt?Math.min(now,G.endAt):now)-G.startAt:0;
+  if(G.mode==='lyn'){
+    G.prevBest=S.best.lyn;
+    G.newBest=G.correct>S.best.lyn;
+    if(G.newBest)S.best.lyn=G.correct;
+  }
+  if(G.mode==='prove'&&G.results.length>0){
+    G.prevBest=S.best.prove;
+    G.newBest=S.best.prove==null||G.correct>S.best.prove||(G.correct===S.best.prove&&G.elapsed<S.best.proveMs);
+    if(G.newBest){S.best.prove=G.correct;S.best.proveMs=G.elapsed;}
+  }
+  save();push(false);
+  renderResult();show('result');
+}
+
+function goHome(){
+  const fresh=G?G.newMastered:[];
+  stopTimers();G=null;
+  renderHome(fresh);show('home');
+}
+
+function pills(list){
+  return '<div class="pills">'+list.map(x=>`<div class="pill"><b>${x.t}</b>${x.s?`<span>${x.s}</span>`:''}</div>`).join('')+'</div>';
+}
+function renderResult(){
+  let h='';
+  const fresh=G.newMastered.map(k=>{const[a,b]=k.split('x').map(Number);return{t:`${a} · ${b} = ${a*b}`};});
+
+  if(G.mode==='prove'){
+    const answered=G.results.length;
+    const wrong=G.results.filter(x=>!x.ok).map(x=>({a:x.a,b:x.b,s:x.val===null?'hoppet over':`du skrev ${x.val}`}));
+    for(let i=answered;i<SHEET.length;i++)wrong.push({a:SHEET[i][0],b:SHEET[i][1],s:'rakk ikke'});
+    const s=G.correct;
+    const head=s===100?'Alt riktig. Du er klar for prøven.':s>=90?'Nesten fullt hus.':s>=70?'Godt jobbet.':'Fin start. Øv på dem du ikke fikk til, og prøv igjen.';
+    h+=`<h1 class="score">${s}<span class="of">/100</span></h1><p class="lead">${head}</p>`;
+    if(G.timeUp)h+=`<p>Tiden gikk ut etter ${answered} stykker.</p>`;
+    else if(answered<100)h+=`<p>Du avsluttet etter ${answered} stykker, på ${mmss(G.elapsed)}.</p>`;
+    else h+=`<p>Du brukte ${mmss(G.elapsed)} på alle 100.</p>`;
+    if(answered)h+=`<p>Det blir ${dec(G.elapsed/answered/1000)} sekunder per stykke. For å rekke alle trenger du 3 sekunder eller raskere.</p>`;
+    if(G.newBest&&G.prevBest!=null)h+='<p><b>Ny personlig rekord.</b></p>';
+    else if(S.best.prove!=null&&!G.newBest)h+=`<p>Beste resultat så langt: ${S.best.prove}/100.</p>`;
+    const seen=new Set();drillPool=[];
+    wrong.forEach(w=>{const k=key(w.a,w.b);if(!seen.has(k)){seen.add(k);drillPool.push([w.a,w.b]);}});
+    if(wrong.length){
+      h+=`<h2>Disse må du øve mer på</h2>`;
+      h+=pills(wrong.map(w=>({t:`${w.a} · ${w.b} = ${w.a*w.b}`,s:w.s})));
+    }
+    if(fresh.length){h+=`<h2>Nye felt på kartet</h2>`+pills(fresh);}
+    h+='<div class="actions">';
+    if(drillPool.length)h+=`<button class="btn primary" data-act="drill">Øv på de ${drillPool.length} du ikke fikk til</button>`;
+    h+=`<button class="btn${drillPool.length?'':' primary'}" data-act="again">Ta prøven igjen</button><button class="btn" data-act="home">Til kartet</button></div>`;
+  }
+  else if(G.mode==='lyn'){
+    h+=`<h1 class="score">${G.correct}</h1><p class="lead">riktige på 60 sekunder.</p>`;
+    if(G.newBest)h+=G.prevBest>0?`<p><b>Ny rekord.</b> Forrige var ${G.prevBest}.</p>`:'<p><b>Første rekord er satt.</b> Klarer du å slå den?</p>';
+    else h+=`<p>Rekorden din er ${S.best.lyn}. Prøv en gang til.</p>`;
+    if(G.count)h+=`<p>Du svarte på ${G.count} stykker, ${dec(G.elapsed/G.count/1000)} sekunder hvert i snitt.</p>`;
+    if(fresh.length)h+=`<h2>Nye felt på kartet</h2>`+pills(fresh);
+    h+='<div class="actions"><button class="btn primary" data-act="again">Ny lynrunde</button><button class="btn" data-act="home">Til kartet</button></div>';
+  }
+  else{
+    h+=`<h1 class="score">${G.correct}<span class="of"> av ${G.count}</span></h1><p class="lead">riktige denne økten.</p>`;
+    if(G.bestStreak>1)h+=`<p>Lengste rekke: ${G.bestStreak} på rad.</p>`;
+    if(fresh.length)h+=`<h2>${fresh.length===1?'Ett nytt felt':fresh.length+' nye felt'} på kartet</h2>`+pills(fresh);
+    else h+='<p>Svar raskt og riktig tre ganger på samme stykke, så får du et nytt felt på kartet.</p>';
+    h+='<div class="actions"><button class="btn primary" data-act="again">Tren videre</button><button class="btn" data-act="home">Til kartet</button></div>';
+  }
+  $('result').innerHTML=h;
+}
+
+$('result').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const act=b.dataset.act,mode=G?G.mode:'trening';
+  if(act==='home')goHome();
+  else if(act==='drill')startGame('trening',drillPool);
+  else if(act==='again')startGame(mode,mode==='trening'?lastPool:null);
+});
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-start]');if(!b)return;
+  startGame(b.dataset.start);
+});
+
+document.addEventListener('keydown',e=>{
+  if($('play').hidden||!G)return;
+  if(/^[0-9]$/.test(e.key)){press(e.key);e.preventDefault();}
+  else if(e.key==='Backspace'){del();e.preventDefault();}
+  else if(e.key==='Enter'){ok();e.preventDefault();}
+  else if(e.key==='Escape'){quit();}
+});
+
+/* ---------- Oppstart ---------- */
+buildPad();
+if(S){
+  renderHome();show('home');
+  if(cloudOn){
+    pull(DB.current).then(rows=>{
+      setCloud(true);
+      if(merge(rows)&&!G&&!$('home').hidden)renderHome();
+    }).catch(()=>setCloud(false));
+  }
+}else{
+  openWho();
+}
+})();
+</script>
+</body>
+</html>
